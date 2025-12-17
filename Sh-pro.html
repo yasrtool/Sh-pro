@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Short Story Exam - The Open Window</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,400&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a252f;
+            --secondary: #34495e;
+            --accent: #e67e22;
+            --success: #27ae60;
+            --error: #c0392b;
+            --light: #ecf0f1;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #000000 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: var(--glass);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            width: 95%;
+            max-width: 800px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.8s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Intro Screen Styles */
+        .intro-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .intro-title {
+            font-family: 'Merriweather', serif;
+            color: var(--primary);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            border-bottom: 3px solid var(--accent);
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .intro-subtitle {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        .credits {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            border-top: 1px solid #bdc3c7;
+            padding-top: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            background: var(--secondary);
+        }
+
+        .btn-telegram {
+            background-color: #0088cc;
+        }
+        .btn-telegram:hover { background-color: #0077b5; }
+
+        /* Input Fields */
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+
+        /* Quiz Styles */
+        .hidden { display: none !important; }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            color: var(--secondary);
+            font-weight: bold;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            height: 8px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-text {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: var(--primary);
+            margin-bottom: 25px;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .options-list li {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .options-list li:hover {
+            border-color: var(--secondary);
+            transform: translateX(5px);
+        }
+
+        .options-list li.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Results & Review */
+        .score-display {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .review-section {
+            margin-top: 30px;
+            text-align: left;
+            border-top: 2px dashed #bdc3c7;
+            padding-top: 20px;
+        }
+
+        .review-item {
+            background: #fff;
+            border-left: 5px solid var(--error);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .review-q { font-weight: bold; margin-bottom: 5px; color: #2c3e50; }
+        .review-wrong { color: var(--error); font-size: 0.9rem; }
+        .review-correct { color: var(--success); font-weight: bold; font-size: 0.9rem; }
+
+        .status-msg {
+            font-size: 0.9rem;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container { padding: 1.5rem; width: 100%; border-radius: 0; min-height: 100vh; }
+            .intro-title { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen" class="container">
+        <div class="intro-content">
+            <h1 class="intro-title">Short Story Exam File</h1>
+            <p class="intro-subtitle">The Open Window - Practice Test Only</p>
+            
+            <div style="margin: 40px 0;">
+                <p style="color: #7f8c8d; font-style: italic;">"Romance at short notice was her specialty."</p>
+            </div>
+
+            <button class="btn" onclick="checkSubscriptionAndEnter()">Enter Exam</button>
+
+            <div class="credits">
+                <p>Prepared by Student: <span style="color: var(--primary); font-weight: bold;">Yasser Ammar</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-screen" class="container hidden">
+        <h2 style="color: var(--primary);">Student Identification</h2>
+        <p>Please enter your full name as registered.</p>
+        <input type="text" id="studentName" placeholder="Full Name (e.g. Yasser Ammar)">
+        <p id="loginError" style="color: var(--error); display: none;">Access Denied. Name not recognized.</p>
+        <button class="btn" onclick="authenticateUser()">Start Assessment</button>
+    </div>
+
+    <div id="quiz-screen" class="container hidden">
+        <div class="header-bar">
+            <span id="timer">Time: Unlimited</span>
+            <span id="progressText">Q 1 / 75</span>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="question-box">
+            <p class="question-text" id="question">Loading...</p>
+            <ul class="options-list" id="options"></ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>Next Question</button>
+        </div>
+    </div>
+
+    <div id="result-screen" class="container hidden" style="text-align: center;">
+        <h2 style="color: var(--secondary);">Assessment Completed</h2>
+        <div class="score-display"><span id="finalScore">0</span>%</div>
+        
+        <div style="display: flex; justify-content: space-around; margin-bottom: 30px;">
+            <div>
+                <div style="font-size: 0.9rem; color: #7f8c8d;">Correct</div>
+                <div style="font-size: 1.5rem; color: var(--success);" id="correctQ">0</div>
+            </div>
+            <div>
+                <div style="font-size: 0.9rem; color: #7f8c8d;">Wrong</div>
+                <div style="font-size: 1.5rem; color: var(--error);" id="wrongQ">0</div>
+            </div>
+        </div>
+
+        <p id="telegramStatus" class="status-msg">Sending results...</p>
+
+        <button class="btn btn-telegram" onclick="window.location.href='https://t.me/vgsscwe'">
+            Submit & Join Channel
+        </button>
+
+        <div class="review-section" id="reviewContainer">
+            <h3 style="color: var(--primary);">Mistake Analysis</h3>
+            <p style="font-size: 0.9rem; color: #7f8c8d;">Review the questions you answered incorrectly:</p>
+            <div id="reviewList"></div>
+        </div>
+    </div>
+
+<script>
+    // ==========================================
+    // CONFIG & LOGIC
+    // ==========================================
+    const TELEGRAM_LINK = "https://t.me/vgsscwe";
+    const ALLOWED_NAMES = ["Ali Ahmed", "Mohammed Ali", "Zahraa Hassan", "Student Test", "admin", "Yasser Ammar"];
+    
+    // Telegram Bot Details (From User)
+    const BOT_TOKEN = "AIzaSyBaBCz0ALoI7tFFt7w_Ve-QYFcTj-WxGZY"; 
+    const CHAT_ID = "7692968376";
+
+    // Subscription Check Logic
+    function checkSubscriptionAndEnter() {
+        const hasJoined = localStorage.getItem('vgsscwe_joined');
+        
+        if (!hasJoined) {
+            // First time click: Open Telegram
+            window.open(TELEGRAM_LINK, '_blank');
+            localStorage.setItem('vgsscwe_joined', 'true');
+            // Inform user to click again
+            const btn = document.querySelector('#intro-screen .btn');
+            btn.innerText = "Click Again to Start";
+            // FIXED LINE BELOW:
+            btn.style.backgroundColor = "#27ae60"; 
+        } else {
+            // Second time: Allow entry
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+        }
+    }
+
+    // ==========================================
+    // EXTENDED QUESTION DATABASE (Original 42 + 33 New Academic)
+    // ==========================================
+    const originalQuestions = [
+        { q: "Who is the author of 'The Open Window'?", options: ["O. Henry", "Saki (H.H. Munro)", "Anton Chekhov", "Edgar Allan Poe"], a: 1 },
+        { q: "What is Framton Nuttel suffering from?", options: ["Heart disease", "A nervous condition", "Insomnia", "Memory loss"], a: 1 },
+        { q: "How old is Vera, the niece?", options: ["Twelve", "Fifteen", "Eighteen", "Twenty"], a: 1 },
+        { q: "What is Vera's specialty according to the text?", options: ["Singing opera", "Romance at short notice", "Hunting snipe", "Cooking tea"], a: 1 },
+        { q: "Why did Framton Nuttel move to the rural retreat?", options: ["To hunt", "To visit his sister", "For a nerve cure", "To buy a house"], a: 2 },
+        { q: "What did Framton's sister give him before he left?", options: ["A gun", "Letters of introduction", "A map of the moor", "A spaniel"], a: 1 },
+        { q: "How long ago did the 'great tragedy' happen according to Vera?", options: ["Five years ago", "Three years ago", "Yesterday", "Ten years ago"], a: 1 },
+        { q: "Who went out through the open window?", options: ["Mrs. Sappleton and Vera", "Framton and his sister", "The husband and two young brothers", "The gardener"], a: 2 },
+        { q: "What season is the story set in?", options: ["December winter", "October afternoon", "July summer", "April spring"], a: 1 },
+        { q: "What specific type of bird were the men shooting?", options: ["Pheasants", "Snipe", "Ducks", "Partridges"], a: 1 },
+        { q: "What was the name of the youngest brother?", options: ["Bertie", "Ronnie", "Fred", "Charlie"], a: 1 },
+        { q: "What song does Ronnie always sing to tease Mrs. Sappleton?", options: ["Bertie, why do you bound?", "Home Sweet Home", "Danny Boy", "The Hunter's Return"], a: 0 },
+        { q: "Why does Mrs. Sappleton keep the window open?", options: ["For fresh air", "She expects her husband and brothers to return", "The lock is broken", "To let the dog out"], a: 1 },
+        { q: "What did Framton talk about when Mrs. Sappleton arrived?", options: ["Hunting", "The weather", "His ailments and infirmities", "Politics"], a: 2 },
+        { q: "How did Mrs. Sappleton react to Framton's conversation?", options: ["She was fascinated", "She replaced a yawn", "She got angry", "She took notes"], a: 1 },
+        { q: "What does Framton see walking across the lawn?", options: ["Ghosts", "Three figures and a dog", "A herd of cows", "Nothing"], a: 1 },
+        { q: "What was one of the figures carrying over his shoulder?", options: ["A red scarf", "A white waterproof coat", "A bag of birds", "A fishing rod"], a: 1 },
+        { q: "How does Framton react when he sees the figures?", options: ["He greets them", "He faints", "He grabs his stick and flees", "He shoots at them"], a: 2 },
+        { q: "Who does Mrs. Sappleton think Framton is when he runs away?", options: ["A thief", "An extraordinary man who saw a ghost", "A rude guest", "A relative"], a: 1 },
+        { q: "What reason does Vera invent for Framton's flight?", options: ["He remembered an appointment", "He has a horror of dogs", "He is a ghost himself", "He dislikes open windows"], a: 1 },
+        { q: "According to Vera, where was Framton hunted by dogs?", options: ["In London", "On the banks of the Ganges", "In the Amazon", "In Cairo"], a: 1 },
+        { q: "Where did Framton have to spend the night to escape the dogs?", options: ["In a tree", "In a newly dug grave", "In a cave", "In a boat"], a: 1 },
+        { q: "What does the name 'Nuttel' suggest about the character?", options: ["He is strong like a nut", "He is nutty (mentally unstable)", "He likes nature", "He is wealthy"], a: 1 },
+        { q: "What does the name 'Sappleton' suggest?", options: ["Wisdom", "Foolishness/Gullibility (Sap)", "Apple orchard owner", "Sadness"], a: 1 },
+        { q: "What does the name 'Vera' ironically mean?", options: ["Victory", "Veracity (Truth)", "Virtue", "Vision"], a: 1 },
+        { q: "What literary device is used when Nuttel seeks a cure but gets worse?", options: ["Metaphor", "Situational Irony", "Hyperbole", "Personification"], a: 1 },
+        { q: "The story within a story structure involves:", options: ["Vera's story inside the main narrative", "Framton's dream", "Mrs. Sappleton's diary", "A letter reading"], a: 0 },
+        { q: "The 'Open Window' is a symbol of:", options: ["The house's architecture", "Vera's expansive imagination & Aunt's grief", "Fresh air", "Financial freedom"], a: 1 },
+        { q: "Who is the 'self-possessed' character?", options: ["Framton", "Mrs. Sappleton", "Vera", " The spaniel"], a: 2 },
+        { q: "What is the climax of the story?", options: ["Framton's arrival", "Vera telling the story", "The return of the hunters", "Framton leaving"], a: 2 },
+        { q: "The narrator's point of view is:", options: ["First person (Vera)", "First person (Framton)", "Third person omniscient", "Second person"], a: 2 },
+        { q: "What color was the spaniel?", options: ["Black", "Brown", "White", "Spotted"], a: 1 },
+        { q: "Mrs. Sappleton's attention was constantly straying to:", options: ["The clock", "The fireplace", "The open window", "Framton's shoes"], a: 2 },
+        { q: "How did the cyclist react to Framton?", options: ["He waved", "He ran into the hedge", "He shouted", "He followed him"], a: 1 },
+        { q: "What did the husband ask when he entered?", options: ["Is tea ready?", "Who was that who bolted out?", "Where is Vera?", "Did you miss me?"], a: 1 },
+        { q: "Saki satirizes which class of society?", options: ["The working class", "The Edwardian upper middle class", "The royalty", "The farmers"], a: 1 },
+        { q: "The tone of the story is best described as:", options: ["Tragic", "Romantic", "Macabre and Humorous", "Educational"], a: 2 },
+        { q: "What indicates that Vera is lying about the tragedy?", options: ["She cries", "Her voice becomes 'falteringly human'", "She laughs", "She whispers"], a: 1 },
+        { q: "The bog where the men were lost was described as:", options: ["Safe", "Treacherous", "Dry", "Beautiful"], a: 1 },
+        { q: "What time of day does the story take place?", options: ["Morning", "Noon", "Late afternoon/Twilight", "Midnight"], a: 2 },
+        { q: "What is the major conflict in the story?", options: ["Man vs Nature", "Reality vs Imagination", "Man vs Society", "Good vs Evil"], a: 1 },
+        { q: "Framton labored under the delusion that strangers are eager to hear about:", options: ["One's ailments", "One's wealth", "One's travels", "One's politics"], a: 0 }
+    ];
+
+    const academicQuestions = [
+        // Plot Structure & Narratology
+        { q: "In the context of the story's tripartite structure, what function does the 'Exposition' serve?", options: ["It resolves the conflict immediately.", "It introduces Vera and evaluates Nuttel's psychological state.", "It describes the hunting accident in real-time.", "It provides a monologue by Mrs. Sappleton."], a: 1 },
+        { q: "Which narrative technique does Saki employ to interrupt the present timeline with the girl's imagined past?", options: ["Stream of consciousness", "Flashback (Analepsis)", "Foreshadowing", "Non-linear fragmentation"], a: 1 },
+        { q: "The story utilizes a 'Frame Narrative'. Which component constitutes the 'inner' story?", options: ["Framton's journey to the countryside.", "Mrs. Sappleton's return to the room.", "Vera's fabrication about the tragedy.", "The cyclist running into the hedge."], a: 2 },
+        { q: "How does the Third-Person Omniscient point of view contribute to the story's twist?", options: ["It reveals Vera's thoughts immediately.", "It restricts the reader to Nuttel's perspective until the end.", "It is narrated solely by the spaniel.", "It allows the reader to see the ghosts before Nuttel does."], a: 1 },
+        
+        // Character Analysis & Psychology
+        { q: "Saki describes Vera as 'self-possessed'. In the context of the story, this quality primarily enables her to:", options: ["Maintain the household finances.", "Maintain a cool head and credibility while lying.", "Hunt snipe effectively.", "Comfort her grieving aunt."], a: 1 },
+        { q: "Framton Nuttel's belief that total strangers crave details of his ailments is described as a:", options: ["Rational expectation.", "Tolerably widespread delusion.", "Medical necessity.", "Social etiquette."], a: 1 },
+        { q: "Which character represents the 'Audience' within the story, mimicking the reader's susceptibility to fiction?", options: ["Vera", "The Spaniel", "Framton Nuttel", "Ronnie"], a: 2 },
+        { q: "The interaction between Vera and the adult world highlights which thematic dynamic?", options: ["The wisdom of the elderly vs. youth.", "The exploitation of adult fragility by youthful imagination.", " The economic dependence of children.", "The importance of formal education."], a: 1 },
+
+        // Symbols & Imagery
+        { q: "Symbolically, the 'Open Window' represents two conflicting concepts based on perspective. These are:", options: ["Heat vs. Cold.", "Aunt's grief/hope vs. Vera's escapism/imagination.", "Wealth vs. Poverty.", "Safety vs. Danger."], a: 1 },
+        { q: "When the truth is revealed at the denouement, the symbol of the window transforms to represent:", options: ["Fresh air.", "The deceit itself.", "Architectural beauty.", "The changing seasons."], a: 1 },
+        { q: "The description of the returning hunters in the 'deepening twilight' utilizes which atmospheric technique?", options: ["Romanticism", "Gothic horror imagery", "Pastoral idyll", "Scientific realism"], a: 1 },
+        { q: "Why does Saki describe the hunters 'noiselessly' approaching the house?", options: ["To imply they are ghosts (phantoms).", "Because they lost their boots.", "Because the grass was wet.", "To show they are polite."], a: 0 },
+
+        // Irony & Satire
+        { q: "The Situational Irony regarding Framton's retreat to the countryside lies in the fact that:", options: ["He forgot his medication.", "The cure (quiet) caused more stress than the disease.", "He met his long-lost brother.", "The countryside was actually a city."], a: 1 },
+        { q: "Saki's choice of a female child (Vera) as the trickster is ironic because:", options: ["Children were expected to be seen and not heard.", "Girls in the Edwardian era were portrayed as trustworthy and innocent.", "She was actually an adult.", "She had no imagination."], a: 1 },
+        { q: "Which statement best exemplifies Dramatic Irony in the story?", options: ["'One would think he had seen a ghost.'", "'It is quite warm for the time of year.'", "'My sister was staying here.'", "'I am very self-possessed.'"], a: 0 },
+        { q: "The phrase 'Romance at short notice was her specialty' serves as:", options: ["A compliment to her love life.", "A euphemism for her lying ability.", "A description of her reading habits.", "A reference to her school grades."], a: 1 },
+        
+        // Themes (Appearance vs Reality / Deception)
+        { q: "The tension between 'Appearance and Reality' is unresolved until:", options: ["Mrs. Sappleton enters the room.", "Vera begins to cry.", "The reader learns the 'ghosts' are living people.", "Framton takes his medicine."], a: 2 },
+        { q: "What makes Vera's deception particularly effective according to the analysis?", options: ["She uses magical props.", "She anchors her lie in an object in plain view (the window).", "She bribes Framton.", "She uses written documents."], a: 1 },
+        { q: "If Vera's deception is interpreted as 'cruel', what broader question does it raise about storytelling?", options: ["Is fiction a form of moral corruption?", "Are all authors liars?", "Should children read books?", "Is printing expensive?"], a: 1 },
+        { q: "The bog described as 'treacherous' mirrors which aspect of the story?", options: ["The physical landscape only.", "The instability of truth and safety in the narrative.", "The cost of land.", "The weather patterns."], a: 1 },
+
+        // Advanced Textual Evidence
+        { q: "When Vera's voice becomes 'falteringly human', it serves to:", options: ["Show she is actually sad.", "Enhance the credibility of her lie through feigned emotion.", "Indicate she has a sore throat.", "Signal the end of the story."], a: 1 },
+        { q: "The 'cyclist running into the hedge' is a detail that adds:", options: ["Tragedy.", "Slapstick humor to the chaotic resolution.", "Romantic interest.", "Political commentary."], a: 1 },
+        { q: "Mrs. Sappleton's constant straying of eyes is interpreted by Framton as:", options: ["Lack of interest in his ailments.", "Fear of ghosts.", "Rude behavior.", "Visual impairment."], a: 0 },
+        { q: "The name 'Sappleton' is analyzed to connote 'Sap', which suggests:", options: ["Strength and vitality.", "Foolishness and gullibility.", "Sweetness.", "Ancestry."], a: 1 },
+
+        // Literary Context
+        { q: "Saki's work is known for satirizing which specific social group?", options: ["The Victorian Industrialists.", "The Edwardian Upper Middle Class.", "The American Working Class.", "The French Aristocracy."], a: 1 },
+        { q: "The 'Letters of Introduction' symbolize:", options: ["Formal social obligations of the era.", "A romantic gesture.", "A legal summons.", "A treasure map."], a: 0 },
+        { q: "Which theme explores the boundary between mental stability and instability?", options: ["Man vs. Nature.", "Sanity and Insanity.", "Youth vs. Age.", "War and Peace."], a: 1 },
+        { q: "Vera's desire to 'escape' the adult world is achieved through:", options: ["Running away physically.", "Imaginative storytelling and trickery.", "Sleeping all day.", "Studying hard."], a: 1 },
+        { q: "The story suggests that 'Reality' is:", options: ["Objective and unchangeable.", "Subject to manipulation by language and perception.", "Only found in cities.", "Unimportant."], a: 1 },
+        { q: "The 'chill shock of nameless fear' that Framton feels is a reaction to:", options: ["The cold wind.", "The realization that the 'dead' are returning.", "His sister's letter.", "The tea being cold."], a: 1 },
+        { q: "Vera's second lie about the 'Ganges' and 'pariah dogs' demonstrates her:", options: ["Knowledge of geography.", "Ability to improvise explanations instantly.", "Love for animals.", "Past travel experience."], a: 1 },
+        { q: "The resolution of the story can be described as:", options: ["A moral lesson.", "A restoration of order.", "A humorous subversion of the horror trope.", "A cliffhanger."], a: 2 },
+        { q: "In the final line, the word 'Romance' is used in the sense of:", options: ["Love and courtship.", "Invention and adventure.", "Language study.", "Historical nostalgia."], a: 1 }
+    ];
+
+    const quizData = [...originalQuestions, ...academicQuestions];
+
+    // ==========================================
+    // APP LOGIC
+    // ==========================================
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let wrong = 0;
+    let currentUser = "";
+    let userAnswers = []; // Store detailed results
+
+    function authenticateUser() {
+        const inputName = document.getElementById("studentName").value.trim();
+        // Check if name is in list (Case insensitive for better UX)
+        const isValid = ALLOWED_NAMES.some(name => name.toLowerCase() === inputName.toLowerCase());
+
+        if (isValid) {
+            currentUser = inputName;
+            document.getElementById("login-screen").classList.add("hidden");
+            document.getElementById("quiz-screen").classList.remove("hidden");
+            loadQuestion();
+        } else {
+            document.getElementById("loginError").style.display = "block";
+        }
+    }
+
+    function loadQuestion() {
+        const qData = quizData[currentQuestionIndex];
+        
+        // Update Progress
+        const percent = ((currentQuestionIndex) / quizData.length) * 100;
+        document.getElementById("progressBar").style.width = percent + "%";
+        document.getElementById("progressText").innerText = `Q ${currentQuestionIndex + 1} / ${quizData.length}`;
+
+        // Render Question
+        document.getElementById("question").innerText = `${currentQuestionIndex + 1}. ${qData.q}`;
+        
+        const optionsUl = document.getElementById("options");
+        optionsUl.innerHTML = "";
+
+        qData.options.forEach((opt, index) => {
+            const li = document.createElement("li");
+            li.innerText = opt;
+            li.onclick = () => selectOption(li, index);
+            optionsUl.appendChild(li);
+        });
+        
+        document.getElementById("nextBtn").disabled = true;
+    }
+
+    let selectedOptionIndex = null;
+
+    function selectOption(liElement, index) {
+        document.querySelectorAll(".options-list li").forEach(opt => opt.classList.remove("selected"));
+        liElement.classList.add("selected");
+        selectedOptionIndex = index;
+        document.getElementById("nextBtn").disabled = false;
+    }
+
+    function nextQuestion() {
+        const qData = quizData[currentQuestionIndex];
+        const isCorrect = selectedOptionIndex === qData.a;
+        
+        // Log Answer
+        userAnswers.push({
+            question: qData.q,
+            userChoice: qData.options[selectedOptionIndex],
+            correctChoice: qData.options[qData.a],
+            isCorrect: isCorrect
+        });
+
+        if (isCorrect) score++;
+        else wrong++;
+
+        currentQuestionIndex++;
+        selectedOptionIndex = null;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById("quiz-screen").classList.add("hidden");
+        document.getElementById("result-screen").classList.remove("hidden");
+
+        const finalPercentage = Math.round((score / quizData.length) * 100);
+        
+        document.getElementById("finalScore").innerText = finalPercentage;
+        document.getElementById("correctQ").innerText = score;
+        document.getElementById("wrongQ").innerText = wrong;
+
+        generateReviewList();
+        sendToTelegram(finalPercentage);
+    }
+
+    function generateReviewList() {
+        const container = document.getElementById("reviewList");
+        container.innerHTML = "";
+
+        // Filter only wrong answers for review (or all if desired, but user asked for errors/corrections)
+        const wrongAnswers = userAnswers.filter(a => !a.isCorrect);
+
+        if (wrongAnswers.length === 0) {
+            container.innerHTML = "<p style='color:green'>Perfect Score! No mistakes to review.</p>";
+            return;
+        }
+
+        wrongAnswers.forEach((item, index) => {
+            const div = document.createElement("div");
+            div.className = "review-item";
+            div.innerHTML = `
+                <div class="review-q">${index + 1}. ${item.question}</div>
+                <div class="review-wrong">❌ You chose: ${item.userChoice}</div>
+                <div class="review-correct">✅ Correct: ${item.correctChoice}</div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function sendToTelegram(percentage) {
+        const statusElem = document.getElementById("telegramStatus");
+        
+        const message = `
+📝 *EXAM RESULT SUBMISSION*
+--------------------------------
+👤 *Student:* ${currentUser}
+🏆 *Score:* ${percentage}%
+✅ *Correct:* ${score}
+❌ *Wrong:* ${wrong}
+🔢 *Total Questions:* ${quizData.length}
+📅 *Time:* ${new Date().toLocaleString()}
+--------------------------------
+_Verified by Exam System_
+        `;
+
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: CHAT_ID,
+                text: message,
+                parse_mode: "Markdown"
+            })
+        })
+        .then(res => {
+            if(res.ok) {
+                statusElem.innerText = "✅ Result sent successfully to Instructor.";
+                statusElem.style.color = "var(--success)";
+            } else {
+                statusElem.innerText = "⚠️ Connection error (Result saved locally).";
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            statusElem.innerText = "⚠️ Network Error.";
+        });
+    }
+
+</script>
+</body>
+</html>
